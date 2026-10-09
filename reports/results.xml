@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="embedded-testbench" tests="26" failures="0" errors="0" skipped="0" time="0.372">
+  <testsuite name="protocol" tests="9" failures="0" errors="0" skipped="0" time="0.001">
+    <testcase classname="embedded_testbench.protocol" name="proto.crc16.vector" time="0.0000">
+      <system-out>{
+  "crc16": "0x4b37"
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.protocol" name="proto.crc16.incremental" time="0.0000">
+      <system-out>{
+  "whole": "0x52c",
+  "split": "0x52c"
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.protocol" name="proto.crc16.byteorder" time="0.0000" />
+    <testcase classname="embedded_testbench.protocol" name="proto.crc8.vector" time="0.0000" />
+    <testcase classname="embedded_testbench.protocol" name="proto.frame.roundtrip" time="0.0001">
+      <system-out>{
+  "encoded_len": 37,
+  "decoded": 1
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.protocol" name="proto.frame.layout" time="0.0000" />
+    <testcase classname="embedded_testbench.protocol" name="proto.dbus.roundtrip" time="0.0001">
+      <system-out>{
+  "first": 364,
+  "last": 1684
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.protocol" name="proto.dbus.invert" time="0.0001">
+      <system-out>{
+  "plain_first": "0x0",
+  "inverted_first": "0xff"
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.protocol" name="proto.dbus.midscale" time="0.0001" />
+  </testsuite>
+  <testsuite name="functional" tests="6" failures="0" errors="0" skipped="0" time="0.013">
+    <testcase classname="embedded_testbench.functional" name="func.version" time="0.0012">
+      <system-out>{
+  "version": "1.3.0"
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.functional" name="func.channels.range" time="0.0025">
+      <system-out>{
+  "channels": [
+    1684,
+    364,
+    1400,
+    1024,
+    364,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024
+  ],
+  "valid": true
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.functional" name="func.channels.values" time="0.0016">
+      <system-out>{
+  "actual": [
+    1684,
+    364,
+    1400,
+    1024,
+    364
+  ]
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.functional" name="func.selftest" time="0.0016">
+      <system-out>{
+  "selftest_ok": true
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.functional" name="func.echo" time="0.0032" />
+    <testcase classname="embedded_testbench.functional" name="func.unknown_cmd" time="0.0032">
+      <system-out>{
+  "error_code": "0xe0"
+}</system-out>
+    </testcase>
+  </testsuite>
+  <testsuite name="robustness" tests="7" failures="0" errors="0" skipped="0" time="0.000">
+    <testcase classname="embedded_testbench.robustness" name="robust.crc_detect" time="0.0000">
+      <system-out>{
+  "frames": [],
+  "errors": [
+    "CrcMismatch"
+  ]
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.robustness" name="robust.fragmented" time="0.0000">
+      <system-out>{
+  "chunks": 10,
+  "frames": 1
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.robustness" name="robust.partial" time="0.0000">
+      <system-out>{
+  "first_batch": 0
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.robustness" name="robust.noise_resync" time="0.0000">
+      <system-out>{
+  "resyncs": 1
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.robustness" name="robust.back_to_back" time="0.0001" />
+    <testcase classname="embedded_testbench.robustness" name="robust.dropped_bytes" time="0.0001">
+      <system-out>{
+  "accepted": 0,
+  "rejected": 3,
+  "simulated": "每帧中部抹掉 3 字节"
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.robustness" name="robust.fault_matrix" time="0.0002">
+      <system-out>{
+  "scenarios": {
+    "丢字节": {
+      "accepted": 0,
+      "rejected": 2
+    },
+    "半包": {
+      "accepted": 0,
+      "rejected": 1
+    },
+    "位翻转": {
+      "accepted": 0,
+      "rejected": 4
+    },
+    "重复帧": {
+      "accepted": 8,
+      "rejected": 0
+    }
+  }
+}</system-out>
+    </testcase>
+  </testsuite>
+  <testsuite name="performance" tests="4" failures="0" errors="0" skipped="0" time="0.357">
+    <testcase classname="embedded_testbench.performance" name="perf.roundtrip" time="0.0387">
+      <system-out>{
+  "iterations": 20,
+  "total_ms": 38.6,
+  "per_frame_ms": 1.929
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.performance" name="perf.throughput" time="0.0608">
+      <system-out>{
+  "requests": 30,
+  "seconds": 0.061,
+  "frames_per_sec": 493.3
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.performance" name="perf.timeout" time="0.2524">
+      <system-out>{
+  "elapsed_s": 0.252,
+  "timeout_s": 0.25,
+  "raised": true
+}</system-out>
+    </testcase>
+    <testcase classname="embedded_testbench.performance" name="perf.retry" time="0.0055">
+      <system-out>{
+  "version": [
+    1,
+    3,
+    0
+  ],
+  "retries": 0
+}</system-out>
+    </testcase>
+  </testsuite>
+</testsuites>

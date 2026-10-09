@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "embedded-testbench"
+version = "1.0.0"
+description = "嵌入式串口设备自动化测试框架：协议解析、故障注入、报告生成、CI 集成"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["embedded", "testing", "serial", "uart", "crc", "modbus", "dbus", "ci"]
+
+dependencies = []   # 核心框架零依赖，只用标准库
+
+[project.optional-dependencies]
+serial = ["pyserial>=3.5"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.scripts]
+embedded-testbench = "embedded_testbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E501",   # 行长由 formatter 处理，中文注释不强制折行
+    "B008",   # 允许函数默认值里的调用
+]

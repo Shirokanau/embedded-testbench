@@ -1,0 +1,703 @@
+{
+  "generated_at": "2026-10-09T13:07:30",
+  "environment": {
+    "python": "3.12.0",
+    "platform": "Windows-11-10.0.26100-SP0",
+    "machine": "AMD64"
+  },
+  "meta": {
+    "被测设备": "DBUS-A5 遥控接收模块（软件模拟器）",
+    "传输层": "LoopbackTransport（内存回环，非物理串口）",
+    "自检模式": "正常",
+    "设备响应延迟": "0 ms",
+    "噪声注入": "关闭",
+    "设备侧统计": "收帧 56，发帧 56"
+  },
+  "suites": [
+    {
+      "name": "protocol",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "errored": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "duration_ms": 0.51,
+      "ok": true,
+      "results": [
+        {
+          "case_id": "proto.crc16.vector",
+          "title": "CRC-16/MODBUS 标准测试向量",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 0.029,
+          "message": "",
+          "assertions": [
+            {
+              "name": "CRC-16/MODBUS 标准向量",
+              "ok": true,
+              "detail": "期望 19255，实际 19255"
+            }
+          ],
+          "evidence": {
+            "crc16": "0x4b37"
+          }
+        },
+        {
+          "case_id": "proto.crc16.incremental",
+          "title": "CRC 分段计算与整体一致",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.044,
+          "message": "",
+          "assertions": [
+            {
+              "name": "分段 CRC 与整体一致",
+              "ok": true,
+              "detail": "期望 1324，实际 1324"
+            }
+          ],
+          "evidence": {
+            "whole": "0x52c",
+            "split": "0x52c"
+          }
+        },
+        {
+          "case_id": "proto.crc16.byteorder",
+          "title": "CRC 线上字节序（低字节在前）",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 0.014,
+          "message": "",
+          "assertions": [
+            {
+              "name": "CRC 低字节在前",
+              "ok": true,
+              "detail": "期望 55，实际 55"
+            },
+            {
+              "name": "CRC 高字节在后",
+              "ok": true,
+              "detail": "期望 75，实际 75"
+            }
+          ],
+          "evidence": {}
+        },
+        {
+          "case_id": "proto.crc8.vector",
+          "title": "CRC-8/MAXIM 标准测试向量",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 0.005,
+          "message": "",
+          "assertions": [
+            {
+              "name": "CRC-8/MAXIM 标准向量",
+              "ok": true,
+              "detail": "期望 161，实际 161"
+            }
+          ],
+          "evidence": {}
+        },
+        {
+          "case_id": "proto.frame.roundtrip",
+          "title": "帧编码解码自洽",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 0.08,
+          "message": "",
+          "assertions": [
+            {
+              "name": "解出 1 帧",
+              "ok": true,
+              "detail": "期望 1，实际 1"
+            },
+            {
+              "name": "载荷一致",
+              "ok": true,
+              "detail": "期望 b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f'，实际 b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f'"
+            }
+          ],
+          "evidence": {
+            "encoded_len": 37,
+            "decoded": 1
+          }
+        },
+        {
+          "case_id": "proto.frame.layout",
+          "title": "帧结构布局（头/长/CRC 位置）",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.012,
+          "message": "",
+          "assertions": [
+            {
+              "name": "帧头 0xA55A",
+              "ok": true,
+              "detail": "期望 b'\\xa5Z'，实际 b'\\xa5Z'"
+            },
+            {
+              "name": "长度字段 = 3",
+              "ok": true,
+              "detail": "期望 3，实际 3"
+            },
+            {
+              "name": "总长 = 头2+长1+载荷3+CRC2",
+              "ok": true,
+              "detail": "期望 8，实际 8"
+            }
+          ],
+          "evidence": {}
+        },
+        {
+          "case_id": "proto.dbus.roundtrip",
+          "title": "DBUS 16 通道编解码还原",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 0.105,
+          "message": "",
+          "assertions": [
+            {
+              "name": "帧长 25 字节",
+              "ok": true,
+              "detail": "期望 25，实际 25"
+            },
+            {
+              "name": "16 通道全部还原",
+              "ok": true,
+              "detail": "期望 [364, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1684]，实际 [364, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1684]"
+            }
+          ],
+          "evidence": {
+            "first": 364,
+            "last": 1684
+          }
+        },
+        {
+          "case_id": "proto.dbus.invert",
+          "title": "DBUS 电平反相可逆",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.06,
+          "message": "",
+          "assertions": [
+            {
+              "name": "两次取反还原",
+              "ok": true,
+              "detail": "期望 b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18'，实际 b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18'"
+            },
+            {
+              "name": "反相后取反 = 未反相",
+              "ok": true,
+              "detail": "期望 b'\\x00\\x04 \\x00\\x01\\x08@\\x00\\x02\\x10\\x80\\x00\\x04 \\x00\\x01\\x08@\\x00\\x02\\x10\\x80\\x00\\x04 '，实际 b'\\x00\\x04 \\x00\\x01\\x08@\\x00\\x02\\x10\\x80\\x00\\x04 \\x00\\x01\\x08@\\x00\\x02\\x10\\x80\\x00\\x04 '"
+            }
+          ],
+          "evidence": {
+            "plain_first": "0x0",
+            "inverted_first": "0xff"
+          }
+        },
+        {
+          "case_id": "proto.dbus.midscale",
+          "title": "DBUS 摇杆中位值解析",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 0.07,
+          "message": "",
+          "assertions": [
+            {
+              "name": "全部通道 = 1024",
+              "ok": true,
+              "detail": ""
+            }
+          ],
+          "evidence": {}
+        }
+      ]
+    },
+    {
+      "name": "functional",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "errored": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "duration_ms": 13.47,
+      "ok": true,
+      "results": [
+        {
+          "case_id": "func.version",
+          "title": "读取模块版本号",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 1.196,
+          "message": "",
+          "assertions": [
+            {
+              "name": "版本号",
+              "ok": true,
+              "detail": "期望 (1, 3, 0)，实际 (1, 3, 0)"
+            }
+          ],
+          "evidence": {
+            "version": "1.3.0"
+          }
+        },
+        {
+          "case_id": "func.channels.range",
+          "title": "通道值落在有效范围",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 2.489,
+          "message": "",
+          "assertions": [
+            {
+              "name": "通道数量",
+              "ok": true,
+              "detail": "期望 16，实际 16"
+            },
+            {
+              "name": "通道值在有效范围",
+              "ok": true,
+              "detail": "范围应为 [364, 1684]"
+            }
+          ],
+          "evidence": {
+            "channels": [
+              1684,
+              364,
+              1400,
+              1024,
+              364,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024,
+              1024
+            ],
+            "valid": true
+          }
+        },
+        {
+          "case_id": "func.channels.values",
+          "title": "通道实测值与设定一致",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 1.596,
+          "message": "",
+          "assertions": [
+            {
+              "name": "通道0 = 副翼打满",
+              "ok": true,
+              "detail": "期望 1684，实际 1684"
+            },
+            {
+              "name": "通道1 = 升降打满",
+              "ok": true,
+              "detail": "期望 364，实际 364"
+            },
+            {
+              "name": "通道3 = 方向中位",
+              "ok": true,
+              "detail": "期望 1024，实际 1024"
+            }
+          ],
+          "evidence": {
+            "actual": [
+              1684,
+              364,
+              1400,
+              1024,
+              364
+            ]
+          }
+        },
+        {
+          "case_id": "func.selftest",
+          "title": "模块自检通过",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 1.641,
+          "message": "",
+          "assertions": [
+            {
+              "name": "模块自检通过",
+              "ok": true,
+              "detail": ""
+            }
+          ],
+          "evidence": {
+            "selftest_ok": true
+          }
+        },
+        {
+          "case_id": "func.echo",
+          "title": "回环数据一致性",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 3.217,
+          "message": "",
+          "assertions": [
+            {
+              "name": "回环数据一致",
+              "ok": true,
+              "detail": "期望 b'\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10'，实际 b'\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10'"
+            }
+          ],
+          "evidence": {}
+        },
+        {
+          "case_id": "func.unknown_cmd",
+          "title": "未知命令返回错误码",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 3.242,
+          "message": "",
+          "assertions": [
+            {
+              "name": "返回未知命令错误码",
+              "ok": true,
+              "detail": "期望 224，实际 224"
+            },
+            {
+              "name": "错误响应回显原命令",
+              "ok": true,
+              "detail": "期望 127，实际 127"
+            }
+          ],
+          "evidence": {
+            "error_code": "0xe0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "robustness",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "errored": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "duration_ms": 0.41,
+      "ok": true,
+      "results": [
+        {
+          "case_id": "robust.crc_detect",
+          "title": "坏 CRC 被检出并拒绝",
+          "severity": "blocker",
+          "outcome": "pass",
+          "duration_ms": 0.036,
+          "message": "",
+          "assertions": [
+            {
+              "name": "坏帧不被接受",
+              "ok": true,
+              "detail": "期望 0，实际 0"
+            },
+            {
+              "name": "报告 1 个 CRC 错误",
+              "ok": true,
+              "detail": "期望 1，实际 1"
+            },
+            {
+              "name": "统计计入 crc_errors",
+              "ok": true,
+              "detail": "期望 1，实际 1"
+            }
+          ],
+          "evidence": {
+            "frames": [],
+            "errors": [
+              "CrcMismatch"
+            ]
+          }
+        },
+        {
+          "case_id": "robust.fragmented",
+          "title": "跨 chunk 拆包还原",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.036,
+          "message": "",
+          "assertions": [
+            {
+              "name": "跨 chunk 还原出 1 帧",
+              "ok": true,
+              "detail": "期望 1，实际 1"
+            },
+            {
+              "name": "载荷完整",
+              "ok": true,
+              "detail": "期望 b'fragmented-frame-payload'，实际 b'fragmented-frame-payload'"
+            }
+          ],
+          "evidence": {
+            "chunks": 10,
+            "frames": 1
+          }
+        },
+        {
+          "case_id": "robust.partial",
+          "title": "半包不报错、补齐后成功",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.021,
+          "message": "",
+          "assertions": [
+            {
+              "name": "半包不产出帧也不报错",
+              "ok": true,
+              "detail": "期望 0，实际 0"
+            },
+            {
+              "name": "补齐后成功解帧",
+              "ok": true,
+              "detail": "期望 1，实际 1"
+            }
+          ],
+          "evidence": {
+            "first_batch": 0
+          }
+        },
+        {
+          "case_id": "robust.noise_resync",
+          "title": "噪声前缀后重新同步",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.017,
+          "message": "",
+          "assertions": [
+            {
+              "name": "跳过噪声后解出 1 帧",
+              "ok": true,
+              "detail": "期望 1，实际 1"
+            },
+            {
+              "name": "载荷正确",
+              "ok": true,
+              "detail": "期望 b'after-noise'，实际 b'after-noise'"
+            },
+            {
+              "name": "记录了重新同步次数",
+              "ok": true,
+              "detail": ""
+            }
+          ],
+          "evidence": {
+            "resyncs": 1
+          }
+        },
+        {
+          "case_id": "robust.back_to_back",
+          "title": "多帧粘连全部还原",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 0.056,
+          "message": "",
+          "assertions": [
+            {
+              "name": "4 个连续帧全部还原",
+              "ok": true,
+              "detail": "期望 [b'aaaa', b'bbbbbbbbbbbbbbbb', b'cccccccccccccccc', b'dddd']，实际 [b'aaaa', b'bbbbbbbbbbbbbbbb', b'cccccccccccccccc', b'dddd']"
+            }
+          ],
+          "evidence": {}
+        },
+        {
+          "case_id": "robust.dropped_bytes",
+          "title": "丢字节被检出且链路可恢复",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 0.06,
+          "message": "",
+          "assertions": [
+            {
+              "name": "丢字节造成的错位被检出",
+              "ok": true,
+              "detail": "检出 3 次 CRC 错误"
+            },
+            {
+              "name": "错位数据一帧都不应被当成好帧接受",
+              "ok": true,
+              "detail": "期望 0，实际 0"
+            },
+            {
+              "name": "统计计入 crc_errors",
+              "ok": true,
+              "detail": ""
+            }
+          ],
+          "evidence": {
+            "accepted": 0,
+            "rejected": 3,
+            "simulated": "每帧中部抹掉 3 字节"
+          }
+        },
+        {
+          "case_id": "robust.fault_matrix",
+          "title": "多故障场景不崩溃",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 0.153,
+          "message": "",
+          "assertions": [
+            {
+              "name": "丢字节 场景未崩溃",
+              "ok": true,
+              "detail": ""
+            },
+            {
+              "name": "半包 场景未崩溃",
+              "ok": true,
+              "detail": ""
+            },
+            {
+              "name": "位翻转 场景未崩溃",
+              "ok": true,
+              "detail": ""
+            },
+            {
+              "name": "重复帧 场景未崩溃",
+              "ok": true,
+              "detail": ""
+            },
+            {
+              "name": "四种故障场景全部走通且无异常抛出",
+              "ok": true,
+              "detail": ""
+            }
+          ],
+          "evidence": {
+            "scenarios": {
+              "丢字节": {
+                "accepted": 0,
+                "rejected": 2
+              },
+              "半包": {
+                "accepted": 0,
+                "rejected": 1
+              },
+              "位翻转": {
+                "accepted": 0,
+                "rejected": 4
+              },
+              "重复帧": {
+                "accepted": 8,
+                "rejected": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "performance",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "errored": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "duration_ms": 357.49,
+      "ok": true,
+      "results": [
+        {
+          "case_id": "perf.roundtrip",
+          "title": "单帧往返延迟",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 38.68,
+          "message": "",
+          "assertions": [
+            {
+              "name": "单帧往返 < 50ms",
+              "ok": true,
+              "detail": "实测 1.93ms"
+            }
+          ],
+          "evidence": {
+            "iterations": 20,
+            "total_ms": 38.6,
+            "per_frame_ms": 1.929
+          }
+        },
+        {
+          "case_id": "perf.throughput",
+          "title": "请求吞吐",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 60.827,
+          "message": "",
+          "assertions": [
+            {
+              "name": "吞吐 > 20 帧/秒",
+              "ok": true,
+              "detail": "实测 493.3"
+            }
+          ],
+          "evidence": {
+            "requests": 30,
+            "seconds": 0.061,
+            "frames_per_sec": 493.3
+          }
+        },
+        {
+          "case_id": "perf.timeout",
+          "title": "超时按时触发不阻塞",
+          "severity": "critical",
+          "outcome": "pass",
+          "duration_ms": 252.379,
+          "message": "",
+          "assertions": [
+            {
+              "name": "无响应时抛 DeviceTimeout",
+              "ok": true,
+              "detail": ""
+            },
+            {
+              "name": "超时按时触发（未永久阻塞）",
+              "ok": true,
+              "detail": "实测 0.25s"
+            }
+          ],
+          "evidence": {
+            "elapsed_s": 0.252,
+            "timeout_s": 0.25,
+            "raised": true
+          }
+        },
+        {
+          "case_id": "perf.retry",
+          "title": "重传路径可用",
+          "severity": "normal",
+          "outcome": "pass",
+          "duration_ms": 5.506,
+          "message": "",
+          "assertions": [
+            {
+              "name": "重传路径下仍能取到版本",
+              "ok": true,
+              "detail": "期望 (1, 3, 0)，实际 (1, 3, 0)"
+            }
+          ],
+          "evidence": {
+            "version": [
+              1,
+              3,
+              0
+            ],
+            "retries": 0
+          }
+        }
+      ]
+    }
+  ]
+}

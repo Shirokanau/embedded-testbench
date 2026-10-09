@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:   # 允许在网页上手动触发
+
+jobs:
+  test:
+    name: 测试（Python ${{ matrix.python-version }} / ${{ matrix.os }}）
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.12"]
+        exclude:
+          # Windows 上只跑一个版本
+          - os: windows-latest
+            python-version: "3.10"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: 单元测试 + 跨语言一致性测试
+        # CC=gcc 指定用系统 gcc 编译 firmware/crc.c 做逐字节比对。
+        # CC 支持带参数的写法（如 "zig cc"），见 tests/test_c_conformance.py
+        env:
+          CC: gcc
+        run: pytest tests -v --tb=short
+
+  # ── 编译 C 模块 ─────────────────────────────────────────────
+  firmware:
+    name: 编译 C 模块
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 编译 firmware/crc.c
+        run: |
+          gcc -std=c99 -O2 -Wall -Wextra -Werror \
+              -o /tmp/crc_cli firmware/crc.c
+          echo "编译通过（-Wall -Wextra -Werror，零警告）"
+
+      - name: C 实现冒烟测试
+        run: |
+          # "123456789" -> CRC-16/MODBUS = 0x4B37
+          got=$(/tmp/crc_cli crc16 313233343536373839)
+          echo "CRC-16 = $got"
+          test "$got" = "4b37" || { echo "标准向量失败"; exit 1; }
+          # "123456789" -> CRC-8/MAXIM = 0xA1
+          got8=$(/tmp/crc_cli crc8 313233343536373839)
+          echo "CRC-8  = $got8"
+          test "$got8" = "a1" || { echo "CRC-8 标准向量失败"; exit 1; }
+          echo "全部标准向量通过"
+
+  # ── 静态检查 ────────────────────────────────────────────────
+  lint:
+    name: 代码检查
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装检查工具
+        run: pip install ruff
+
+      - name: ruff 静态检查
+        run: ruff check src tests --output-format=github
+
+  # ── 跑完整测试台并归档报告 ──────────────────────────────────
+  testbench:
+    name: 执行测试台并归档报告
+    runs-on: ubuntu-latest
+    needs: [test]   # 单元测试过了才有意义
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 运行测试台（正常场景）
+        run: |
+          export PYTHONPATH=src
+          python -m embedded_testbench run --out reports
+
+      - name: 验证故障注入能让测试变红
+        # --selftest-fail 让设备自检失败，此时必须返回非 0
+        run: |
+          export PYTHONPATH=src
+          if python -m embedded_testbench run --out reports/canary --selftest-fail; then
+            echo "::error:: 注入了故障但测试仍然通过 —— 测试框架失效！"
+            exit 1
+          else
+            echo "符合预期：故障注入后测试返回非 0"
+          fi
+
+      - name: 上传测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: reports/
+          retention-days: 30
+
+      - name: 发布 JUnit 测试结果
+        # 把 results.xml 渲染成 PR 里的检查结果
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: reports/results.xml
+          check_name: 设备测试台结果
+          require_tests: true
